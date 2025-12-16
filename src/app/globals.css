@@ -24,3 +24,22 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+/* Custom Scrollbar for Timeline */
+.thin-scrollbar::-webkit-scrollbar {
+  height: 4px; /* Thin height for horizontal scroll */
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* Gray-300 */
+  border-radius: 20px;
+}
+
+.dark .thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #475569; /* Slate-600 */
+}
