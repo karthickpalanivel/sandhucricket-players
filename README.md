@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏏 Sandhu Cricket (Web Edition)
 
-## Getting Started
+A professional street cricket scorer application built with **Next.js**, ported from the original React Native mobile app. This web application allows users to score gully cricket matches with flexible rules, detailed statistics, and a "Vibe Check" UI.
 
-First, run the development server:
+![Project Status](https://img.shields.io/badge/status-active-success.svg)
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## ✨ Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🎮 Gameplay & Scoring
+- **Flexible Rules:** Configure match overs (1-20) and custom rules for Wides and No-Balls (Re-ball vs. Run only).
+- **Advanced Scoring Engine:** Handle complex scenarios like "Wide + Runs off bat" or "No Ball + Byes".
+- **Undo/Redo System:** Full history stack allows you to undo mistakes and redo them if needed.
+- **Timeline:** A visual scrolling ticker showing every ball history (e.g., `1`, `4`, `W`, `WD+2`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🎨 UI/UX (Vibe Check)
+- **Dark/Light Mode:** Seamless theme switching with persistent storage.
+- **Responsive Design:** Optimized for mobile browsers to feel like a native app.
+- **Smooth Animations:** Powered by simple CSS transitions and Tailwind utility classes.
+- **Read-Only Mode:** Prevents accidental scoring when viewing past innings data.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🧠 Smart Logic
+- **Persistence:** Automatically saves match state to Local Storage. Refreshing the page won't lose your score.
+- **Auto-Conclusion:** Detects when overs are finished or a target is chased.
+- **Innings Management:** Handles the transition between 1st and 2nd innings with a summary view.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠 Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Icons:** [Lucide React](https://lucide.dev/)
+- **State Management:** React Hooks (`useState`, `useReducer` pattern) + Local Storage
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🚀 Getting Started
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Follow these steps to set up the project locally on your machine.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone [https://github.com/your-username/sandhu-cricket-web.git](https://github.com/your-username/sandhu-cricket-web.git)
+   cd sandhu-cricket-web
