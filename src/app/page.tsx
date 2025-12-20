@@ -7,7 +7,6 @@ import { ChevronRight, Trophy, Settings2 } from 'lucide-react';
 import ThemeToggle from "@/components/ThemeToggle";
 
 // --- HELPER COMPONENT: CARD ---
-// Modular card component for styling consistency
 const Card = ({ 
   children, 
   title, 
@@ -29,34 +28,29 @@ const Card = ({
 // --- MAIN COMPONENT ---
 export default function SetupScreen() {
   const router = useRouter();
-  const [isClient, setIsClient] = useState(false); // Fix hydration mismatch
+  const [isClient, setIsClient] = useState(false); 
 
-  // 1. STATE: The "Draft" Configuration
+  // 1. STATE
   const [config, setConfig] = useState<MatchConfig>({
-    totalOvers: 5,         // Default: 5 over match
-    wideRule: 'both',      // Default: Wide = 1 Run + Extra Ball
-    noBallRule: 'both',    // Default: No Ball = 1 Run + Extra Ball
-    teamOneName: '',       // Empty by default
+    totalOvers: 5,        
+    wideRule: 'both',     
+    noBallRule: 'both',   
+    teamOneName: '',      
     teamTwoName: '',
   });
 
-  // Ensure we only render on client (prevents hydration errors with localStorage)
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // 2. HANDLER: Updates the config state
   const updateConfig = (key: keyof MatchConfig, value: any) => {
     setConfig((prev) => ({ ...prev, [key]: value }));
   };
 
-  // 3. ACTION: The "Start Match" Logic
   const handleStartMatch = () => {
-    // Validation: Ensure team names are not empty
     const t1 = config.teamOneName.trim() || 'Team A';
     const t2 = config.teamTwoName.trim() || 'Team B';
 
-    // THE CRITICAL STEP: Creating the "Brain" (Initial State)
     const initialState: MatchState = {
       currentInnings: 1,
       status: 'in-progress',
@@ -70,31 +64,25 @@ export default function SetupScreen() {
         history: [],
         extras: { wides: 0, noBalls: 0 },
       },
-      inningsTwo: null, // Second innings doesn't exist yet
+      inningsTwo: null, 
     };
 
-    // PERSISTENCE: Save to browser storage
     localStorage.setItem('sandhu_cricket_match', JSON.stringify(initialState));
-
-    // NAVIGATION: Go to the actual game
     router.push('/match');
   };
 
-  if (!isClient) return null; // Render nothing on server
+  if (!isClient) return null; 
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-950 p-4 pb-24 md:p-8">
-      {/* HEADER SECTION */}
+      {/* HEADER */}
       <div className="max-w-md mx-auto mb-8 flex items-center justify-between">
-         {/* Title */}
         <div className="space-y-1">
             <h1 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">
-            Sandhu Cricket Setup
+            Sandhu Cricket
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">Setup your match</p>
         </div>
-        
-        {/* Theme Toggle Button */}
         <ThemeToggle />
       </div>
 
@@ -126,27 +114,41 @@ export default function SetupScreen() {
           </div>
         </Card>
 
-        {/* Card 2: Overs */}
+        {/* Card 2: Overs (SLIDER VERSION) */}
         <Card title="Match Length" icon={<Settings2 size={20} />}>
-          <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-700 p-2 rounded-lg">
-            <button 
-              onClick={() => updateConfig('totalOvers', Math.max(1, config.totalOvers - 1))}
-              className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-600 dark:text-white rounded-md shadow-sm font-bold text-xl active:scale-90 transition-transform hover:bg-gray-50 dark:hover:bg-gray-500"
-            >-</button>
-            <div className="text-center">
-              <span className="text-3xl font-black text-gray-800 dark:text-white">{config.totalOvers}</span>
-              <span className="text-xs block text-gray-500 dark:text-gray-400 font-bold uppercase">Overs</span>
+          <div className="bg-gray-100 dark:bg-gray-700 p-5 rounded-xl">
+            {/* Display Value */}
+            <div className="flex justify-between items-end mb-4">
+               <span className="text-gray-500 dark:text-gray-400 font-bold text-xs uppercase tracking-widest">Duration</span>
+               <div className="text-right">
+                 <span className="text-5xl font-black text-blue-600 dark:text-blue-400">{config.totalOvers}</span>
+                 <span className="text-xs text-gray-500 dark:text-gray-300 font-bold ml-1">OVERS</span>
+               </div>
             </div>
-            <button 
-              onClick={() => updateConfig('totalOvers', Math.min(20, config.totalOvers + 1))}
-              className="w-12 h-12 flex items-center justify-center bg-white dark:bg-gray-600 dark:text-white rounded-md shadow-sm font-bold text-xl active:scale-90 transition-transform hover:bg-gray-50 dark:hover:bg-gray-500"
-            >+</button>
+
+            {/* Slider Input */}
+            <input 
+              type="range" 
+              min="1" 
+              max="20" 
+              value={config.totalOvers} 
+              onChange={(e) => updateConfig('totalOvers', parseInt(e.target.value))}
+              className="w-full h-4 bg-gray-300 dark:bg-gray-600 rounded-full appearance-none cursor-pointer accent-blue-600 dark:accent-blue-500 hover:accent-blue-700 transition-all"
+            />
+            
+            {/* Scale Labels */}
+            <div className="flex justify-between text-[10px] text-gray-400 dark:text-gray-500 mt-2 font-mono font-bold px-1">
+              <span>1</span>
+              <span>5</span>
+              <span>10</span>
+              <span>15</span>
+              <span>20</span>
+            </div>
           </div>
         </Card>
 
-        {/* Card 3: Rules (Wides & No Balls) */}
+        {/* Card 3: Rules */}
         <Card title="Extras Rules">
-          {/* Helper Function for Rule Buttons */}
           {['wideRule', 'noBallRule'].map((ruleKey) => (
             <div key={ruleKey} className="mb-4 last:mb-0">
               <label className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-2 block">
@@ -177,7 +179,6 @@ export default function SetupScreen() {
 
       </div>
 
-      {/* Floating Action Button (FAB) for Start */}
       <div className="fixed bottom-6 left-0 right-0 px-4 flex justify-center z-10">
         <button
           onClick={handleStartMatch}
