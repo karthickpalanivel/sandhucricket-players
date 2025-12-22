@@ -6,7 +6,6 @@ export const useScoring = () => {
   const [historyStack, setHistoryStack] = useState<MatchState[]>([]);
   const [futureStack, setFutureStack] = useState<MatchState[]>([]);
 
-  // ... (Keep existing Load/Save useEffects) ...
   useEffect(() => {
     const saved = localStorage.getItem('sandhu_cricket_match');
     if (saved) setMatch(JSON.parse(saved));
@@ -16,75 +15,123 @@ export const useScoring = () => {
     if (match) localStorage.setItem('sandhu_cricket_match', JSON.stringify(match));
   }, [match]);
 
-  // ... (Keep pushToHistory) ...
   const pushToHistory = (currentState: MatchState) => {
     setHistoryStack((prev) => [...prev, currentState]);
     setFutureStack([]); 
   };
 
-  // --- UPDATED SCORE FUNCTION ---
-  // Now accepts isWicket flag for extras
+  // --- PLAYER ASSIGNMENT ACTIONS ---
+
+  const setStriker = (name: string) => {
+    setMatch(prev => {
+      if (!prev) return null;
+      const next = JSON.parse(JSON.stringify(prev));
+      const innings = next.currentInnings === 1 ? next.inningsOne : next.inningsTwo;
+      
+      innings.currentStriker = name;
+      // Init stats if new
+      if (!innings.battingStats[name]) innings.battingStats[name] = { runs: 0, balls: 0, fours: 0, sixes: 0 };
+      
+      return next;
+    });
+  };
+
+  const setNonStriker = (name: string) => {
+    setMatch(prev => {
+      if (!prev) return null;
+      const next = JSON.parse(JSON.stringify(prev));
+      const innings = next.currentInnings === 1 ? next.inningsOne : next.inningsTwo;
+      
+      innings.currentNonStriker = name;
+      if (!innings.battingStats[name]) innings.battingStats[name] = { runs: 0, balls: 0, fours: 0, sixes: 0 };
+      
+      return next;
+    });
+  };
+
+  const setBowler = (name: string) => {
+    setMatch(prev => {
+      if (!prev) return null;
+      const next = JSON.parse(JSON.stringify(prev));
+      const innings = next.currentInnings === 1 ? next.inningsOne : next.inningsTwo;
+      
+      innings.currentBowler = name;
+      if (!innings.bowlingStats[name]) innings.bowlingStats[name] = { overs: 0, runs: 0, wickets: 0 };
+      
+      return next;
+    });
+  };
+
+  // --- CORE SCORING ENGINE ---
+
   const scoreBall = useCallback((
     type: 'legal' | 'wide' | 'no-ball' | 'wicket', 
     runsOffBat: number = 0,
-    isExtraWicket: boolean = false // <--- NEW PARAMETER
+    isExtraWicket: boolean = false
   ) => {
     setMatch((prevMatch) => {
       if (!prevMatch) return null;
-
+      
       const currentInningsKey = prevMatch.currentInnings === 1 ? 'inningsOne' : 'inningsTwo';
-      const innings = prevMatch[currentInningsKey]!; // Force unwrap
-      const config = prevMatch.config;
+      const innings = prevMatch[currentInningsKey];
+      
+      // 1. Guard Clauses (Safety Check)
+      if (!innings || !innings.currentStriker || !innings.currentBowler) return prevMatch; // Must have players selected
 
-      // 1. OVERS LIMIT CHECK
-      // If the match is defined as 5 overs, stop at 30 balls.
-      const maxBalls = config.totalOvers * 6;
-      if (innings.ballsBowled >= maxBalls) {
-        // Allow ONLY Undo (which doesn't call this function) or End Innings
-        return prevMatch; 
-      }
+      // 2. OVERS LIMIT CHECK
+      const maxBalls = prevMatch.config.totalOvers * 6;
+      if (innings.ballsBowled >= maxBalls) return prevMatch; 
 
-      // 2. TARGET CHECK (2nd Innings)
+      // 3. TARGET CHECK
       if (prevMatch.currentInnings === 2 && prevMatch.inningsOne) {
           const target = prevMatch.inningsOne.totalRuns + 1;
-          if (innings.totalRuns >= target) return prevMatch; // Match Won already
+          if (innings.totalRuns >= target) return prevMatch;
       }
 
-      // WICKETS CHECK
-      if (innings.wickets >= 10) return prevMatch; // All out
+      if (innings.wickets >= 10) return prevMatch;
 
-      // --- START SCORING ---
+      // --- BEGIN UPDATE ---
       pushToHistory(prevMatch);
       const nextMatch = JSON.parse(JSON.stringify(prevMatch));
       const nextInnings: InningsData = nextMatch[currentInningsKey];
+      const config = nextMatch.config;
+
+      // Current Players
+      const striker = nextInnings.currentStriker!;
+      const bowler = nextInnings.currentBowler!;
 
       let runsToAdd = runsOffBat;
       let isLegalBall = false;
       let isWicket = (type === 'wicket') || isExtraWicket;
       let displaySymbol = "";
 
-      // LOGIC ENGINE
+      // --- BALL TYPE LOGIC ---
       if (type === 'legal') {
         isLegalBall = true;
         displaySymbol = runsOffBat.toString();
-        if (isWicket) displaySymbol = 'W'; // Bowled/Catch
+        if (isWicket) displaySymbol = 'W';
+        
+        // Batter Stats
+        nextInnings.battingStats[striker].balls += 1;
+        nextInnings.battingStats[striker].runs += runsOffBat;
+        if (runsOffBat === 4) nextInnings.battingStats[striker].fours += 1;
+        if (runsOffBat === 6) nextInnings.battingStats[striker].sixes += 1;
       } 
       else if (type === 'wide') {
         const isReball = config.wideRule !== 'run'; 
         runsToAdd += 1; // Base Wide
         isLegalBall = !isReball;
         
-        // Symbol construction: WD + Runs + W
-        // e.g. "WD", "WD+1", "WD+W", "WD+1+W"
         displaySymbol = "WD";
         if (runsOffBat > 0) displaySymbol += `+${runsOffBat}`;
         if (isWicket) displaySymbol += "+W";
         
         nextInnings.extras.wides += 1;
+        // Wides don't count to batter balls, but runs might (depending on rule, usually extras go to team, run-hits go to batter. Simplified here: all extras to team).
       } 
       else if (type === 'no-ball') {
         const isReball = config.noBallRule !== 'run';
-        runsToAdd += 1; // Base NB
+        runsToAdd += 1; 
         isLegalBall = !isReball;
 
         displaySymbol = "NB";
@@ -92,24 +139,64 @@ export const useScoring = () => {
         if (isWicket) displaySymbol += "+W";
 
         nextInnings.extras.noBalls += 1;
+        // NB counts as ball faced by batter usually
+        nextInnings.battingStats[striker].balls += 1;
+        nextInnings.battingStats[striker].runs += runsOffBat;
+        if (runsOffBat === 4) nextInnings.battingStats[striker].fours += 1;
+        if (runsOffBat === 6) nextInnings.battingStats[striker].sixes += 1;
       }
       else if (type === 'wicket') {
          isLegalBall = true;
          isWicket = true;
          displaySymbol = 'W';
+         
+         nextInnings.battingStats[striker].balls += 1;
       }
 
-      // UPDATE STATS
+      // --- UPDATE TOTALS ---
       nextInnings.totalRuns += runsToAdd;
       if (isLegalBall) nextInnings.ballsBowled += 1;
       if (isWicket) nextInnings.wickets += 1;
       nextInnings.history.push(displaySymbol as BallEvent);
 
+      // Bowler Stats
+      nextInnings.bowlingStats[bowler].runs += runsToAdd;
+      if (isWicket && type !== 'wide' && type !== 'no-ball') { // Run outs technically don't go to bowler, but simplified here
+        nextInnings.bowlingStats[bowler].wickets += 1;
+      }
+
+      // --- ROTATION LOGIC ---
+      
+      // 1. Rotate Strike on Odd Runs
+      if (runsOffBat % 2 !== 0) {
+        const temp = nextInnings.currentStriker;
+        nextInnings.currentStriker = nextInnings.currentNonStriker;
+        nextInnings.currentNonStriker = temp;
+      }
+
+      // 2. Over Completion
+      if (isLegalBall && nextInnings.ballsBowled % 6 === 0) {
+        // Swap Ends
+        const temp = nextInnings.currentStriker;
+        nextInnings.currentStriker = nextInnings.currentNonStriker;
+        nextInnings.currentNonStriker = temp;
+        
+        // Bowler change required
+        nextInnings.currentBowler = undefined; // Will trigger modal
+      }
+
+      // 3. Fall of Wicket
+      if (isWicket) {
+        // Current Striker is out (Simplified. Future: Ask who is out)
+        nextInnings.battingStats[striker].outBy = bowler; // Simplified
+        nextInnings.currentStriker = undefined; // Will trigger modal
+      }
+
       return nextMatch;
     });
   }, []);
 
-  // ... (Keep undo/redo/endInnings exactly as before) ...
+  // --- UNDO/REDO/END (Kept same but ensure full state restore) ---
   const endInnings = useCallback(() => {
     setMatch((prev) => {
       if (!prev) return null;
@@ -127,6 +214,8 @@ export const useScoring = () => {
                 ballsBowled: 0,
                 history: [],
                 extras: { wides: 0, noBalls: 0 },
+                battingStats: {},
+                bowlingStats: {}
              };
         }
       } else {
@@ -154,6 +243,7 @@ export const useScoring = () => {
 
   return { 
     match, scoreBall, undo, redo, endInnings, 
+    setStriker, setNonStriker, setBowler,
     canUndo: historyStack.length > 0, 
     canRedo: futureStack.length > 0 
   };

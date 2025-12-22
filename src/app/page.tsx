@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { MatchConfig, MatchState } from '@/types';
-import { ChevronRight, Trophy, Settings2 } from 'lucide-react';
+import { ChevronRight, Trophy, Settings2, Users } from 'lucide-react';
 import ThemeToggle from "@/components/ThemeToggle";
+import Link from 'next/link';
 
 // --- HELPER COMPONENT: CARD ---
 const Card = ({ 
@@ -37,10 +38,34 @@ export default function SetupScreen() {
     noBallRule: 'both',   
     teamOneName: '',      
     teamTwoName: '',
+    // Initialize empty player lists (Typescript will expect this if you updated types/index.ts)
+    teamOnePlayers: [],
+    teamTwoPlayers: []
   });
 
+  // 2. LOAD SAVED TEAMS ON MOUNT
   useEffect(() => {
     setIsClient(true);
+    
+    // Check if we have teams from the Team Manager page
+    const teamDataStr = localStorage.getItem('sc_teams_final');
+    if (teamDataStr) {
+      try {
+        const teamData = JSON.parse(teamDataStr);
+        
+        setConfig(prev => ({
+          ...prev,
+          // Pre-fill names with counts if not already set
+          teamOneName: prev.teamOneName || `Team A (${teamData.teamA.length})`,
+          teamTwoName: prev.teamTwoName || `Team B (${teamData.teamB.length})`,
+          // Load actual player data
+          teamOnePlayers: teamData.teamA.map((p: any) => p.name),
+          teamTwoPlayers: teamData.teamB.map((p: any) => p.name)
+        }));
+      } catch (e) {
+        console.error("Failed to load team data", e);
+      }
+    }
   }, []);
 
   const updateConfig = (key: keyof MatchConfig, value: any) => {
@@ -54,7 +79,11 @@ export default function SetupScreen() {
     const initialState: MatchState = {
       currentInnings: 1,
       status: 'in-progress',
-      config: { ...config, teamOneName: t1, teamTwoName: t2 },
+      config: { 
+        ...config, 
+        teamOneName: t1, 
+        teamTwoName: t2 
+      },
       inningsOne: {
         battingTeam: t1,
         bowlingTeam: t2,
@@ -63,6 +92,9 @@ export default function SetupScreen() {
         ballsBowled: 0,
         history: [],
         extras: { wides: 0, noBalls: 0 },
+        // Initialize Stats objects
+        battingStats: {},
+        bowlingStats: {}
       },
       inningsTwo: null, 
     };
@@ -87,6 +119,28 @@ export default function SetupScreen() {
       </div>
 
       <div className="max-w-md mx-auto space-y-4">
+
+        {/* --- NEW: ROSTER LINK --- */}
+        <Link 
+          href="/teams" 
+          className="block p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-2xl border border-indigo-100 dark:border-indigo-800 flex items-center justify-between group transition-all hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-700"
+        >
+           <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-indigo-600 text-white rounded-xl shadow-indigo-200 dark:shadow-none shadow-lg">
+                 <Users size={20} />
+              </div>
+              <div className="text-left">
+                 <h3 className="font-bold text-indigo-900 dark:text-indigo-300">Advanced Roster</h3>
+                 <p className="text-xs text-indigo-600 dark:text-indigo-400 font-medium mt-0.5">
+                   {config.teamOnePlayers && config.teamOnePlayers.length > 0 
+                     ? `${config.teamOnePlayers.length + config.teamTwoPlayers.length} players loaded`
+                     : "Import names & manage squads"
+                   }
+                 </p>
+              </div>
+           </div>
+           <ChevronRight className="text-indigo-400 group-hover:translate-x-1 transition-transform" />
+        </Link>
         
         {/* Card 1: Teams */}
         <Card title="Teams" icon={<Trophy size={20} />}>
@@ -126,14 +180,14 @@ export default function SetupScreen() {
                </div>
             </div>
 
-            {/* Slider Input */}
+            {/* Slider Input with 'modern-range' class */}
             <input 
               type="range" 
               min="1" 
               max="20" 
               value={config.totalOvers} 
               onChange={(e) => updateConfig('totalOvers', parseInt(e.target.value))}
-              className="w-full h-4 bg-gray-300 dark:bg-gray-600 rounded-full appearance-none cursor-pointer accent-blue-600 dark:accent-blue-500 hover:accent-blue-700 transition-all"
+              className="modern-range w-full appearance-none focus:outline-none focus:ring-0"
             />
             
             {/* Scale Labels */}

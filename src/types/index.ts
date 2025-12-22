@@ -1,36 +1,53 @@
 // src/types/index.ts
 
-// 1. CONFIGURATION: What the user chooses on the Setup Screen
+export interface Player {
+  id: string;
+  name: string;
+}
+
+// Used for the draft screen state
+export interface TeamDraftState {
+  pool: Player[];
+  teamA: Player[];
+  teamB: Player[];
+}
+
 export interface MatchConfig {
   totalOvers: number;
-  wideRule: 'run' | 'reball' | 'both';  
+  wideRule: 'run' | 'reball' | 'both';
   noBallRule: 'run' | 'reball' | 'both';
   teamOneName: string;
   teamTwoName: string;
+  // NEW: Connected Players
+  teamOnePlayers: string[]; // List of names
+  teamTwoPlayers: string[];
 }
 
-// 2. THE LIVE STATE: This is what changes every time you press a button
 export interface MatchState {
   currentInnings: 1 | 2;
-  config: MatchConfig;         
-  inningsOne: InningsData;      
-  inningsTwo: InningsData | null; 
+  config: MatchConfig;
+  inningsOne: InningsData;
+  inningsTwo: InningsData | null;
   status: 'setup' | 'in-progress' | 'completed';
 }
 
-// 3. INNINGS DATA: The specific stats for one team
 export interface InningsData {
   battingTeam: string;
   bowlingTeam: string;
   totalRuns: number;
   wickets: number;
-  ballsBowled: number;          
-  history: BallEvent[];         
+  ballsBowled: number;
+  history: BallEvent[];
   extras: {
     wides: number;
     noBalls: number;
   };
+  // NEW: Player Performance Tracking (Placeholder for next phase)
+  battingStats: { [playerId: string]: { runs: number; balls: number; fours: number; sixes: number; outBy?: string } };
+  bowlingStats: { [playerId: string]: { overs: number; runs: number; wickets: number } };
+  currentStriker?: string;
+  currentNonStriker?: string;
+  currentBowler?: string;
 }
 
-// 4. EVENTS: Valid values for a single ball
-export type BallEvent = '0' | '1' | '2' | '3' | '4' | '6' | 'W' | 'WD' | 'NB';
+export type BallEvent = '0' | '1' | '2' | '3' | '4' | '6' | 'W' | 'WD' | 'NB' | string;
