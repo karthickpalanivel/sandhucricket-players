@@ -87,7 +87,6 @@ Standard cricket apps assume you adhere to strict ICC rules with 11 players. **S
 | **Run Out** | Just "Wicket" | **Who + Runs Scored** |
 | **Overs Finish** | Auto-close Innings | **Manual Close** (Allows disputes/extra balls) |
 | **Player List** | Manual Entry every time | **Draft System + History Restore** |
-| **Theme** | Light Mode | **System/Manual Dark Mode Toggle** |
 
 ---
 
@@ -97,3 +96,18 @@ Standard cricket apps assume you adhere to strict ICC rules with 11 players. **S
    ```bash
    git clone [https://github.com/your-username/sandhu-cricket-web.git](https://github.com/your-username/sandhu-cricket-web.git)
    cd sandhu-cricket-web
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Run the development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
