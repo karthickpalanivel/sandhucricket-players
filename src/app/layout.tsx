@@ -6,10 +6,10 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Sandhu Cricket",
+  title: "Sandhu Players' Cricket Scorer",
   description: "Street cricket scorer built with Next.js",
   icons: {
-    icon: '/icon.png',
+    icon: '/icon.png', // Looks for icon.png in public folder
     shortcut: '/icon.png',
     apple: '/icon.png',
   },
