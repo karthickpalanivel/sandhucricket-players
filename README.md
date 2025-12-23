@@ -5,7 +5,7 @@ A professional street cricket scorer application built with **Next.js**. This is
 ![Project Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-![Visit trail site](https://scp-kart.vercel.app)
+https://scp-kart.vercel.app
 
 ## 🚀 What Makes This Special?
 
