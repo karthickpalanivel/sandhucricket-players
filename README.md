@@ -1,16 +1,15 @@
 # 🏏 Sandhu Cricket (Updated Edition - Now you can add players)
 
-Live Link: https://freerulecric.vercel.app
-
-V.0.1 
-Live Link: https://sandhucricket.vercel.app/ (without players just set rules, add runs, wickets - innings break - repeat)
-GitHub Link: https://github.com/karthickpalanivel/sandhuCricketWeb
-
 A professional street cricket scorer application built with **Next.js**. This isn't just a tally counter; it's a logic-driven engine designed for the chaos, arguments, and specific rules of **Gully (Street) Cricket**.
 
 ![Project Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
+Live Link: https://freerulecric.vercel.app
+
+V.0.1 
+* **Live Link:** https://sandhucricket.vercel.app/ (without players just set rules, add runs, wickets - innings break - repeat)
+* **GitHub Link:** https://github.com/karthickpalanivel/sandhuCricketWeb
 
 ## 🚀 What Makes This Special?
 
