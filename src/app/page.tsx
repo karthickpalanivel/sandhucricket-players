@@ -63,7 +63,7 @@ export default function SetupScreen() {
       }
     }
 
-    // 2. Then Mark as Client Ready (Prevents cascading issues)
+    // 2. Then Mark as Client Ready
     setIsClient(true);
   }, []);
 
@@ -96,6 +96,12 @@ export default function SetupScreen() {
   };
 
   const handleStartMatch = () => {
+    // --- VALIDATION CHECK ---
+    if (config.teamOnePlayers.length === 0 || config.teamTwoPlayers.length === 0) {
+        alert("⚠️ Teams cannot be empty!\n\nPlease use the 'Advanced Roster' button to add players before starting.");
+        return;
+    }
+
     const t1 = config.teamOneName.trim() || "Team A";
     const t2 = config.teamTwoName.trim() || "Team B";
 
@@ -140,9 +146,10 @@ export default function SetupScreen() {
           {/* Load History Button */}
           <button
             onClick={loadLastSettings}
-            className="p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-full bg-gray-100 dark:bg-gray-800 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-gray-700 transition-colors"
             title="Load Last Match Settings"
           >
+            <p>Load Previous</p>
             <History size={20} />
           </button>
         </div>

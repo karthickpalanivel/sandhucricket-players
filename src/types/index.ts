@@ -1,25 +1,23 @@
-// src/types/index.ts
-
 export interface Player {
   id: string;
   name: string;
 }
 
-// Used for the draft screen state
 export interface TeamDraftState {
   pool: Player[];
   teamA: Player[];
   teamB: Player[];
+  commonPlayer: Player | null; // <--- NEW FIELD
 }
 
+// ... keep MatchConfig, MatchState, etc. as they are
 export interface MatchConfig {
   totalOvers: number;
   wideRule: 'run' | 'reball' | 'both';
   noBallRule: 'run' | 'reball' | 'both';
   teamOneName: string;
   teamTwoName: string;
-  // NEW: Connected Players
-  teamOnePlayers: string[]; // List of names
+  teamOnePlayers: string[];
   teamTwoPlayers: string[];
 }
 
@@ -42,7 +40,6 @@ export interface InningsData {
     wides: number;
     noBalls: number;
   };
-  // NEW: Player Performance Tracking (Placeholder for next phase)
   battingStats: { [playerId: string]: { runs: number; balls: number; fours: number; sixes: number; outBy?: string } };
   bowlingStats: { [playerId: string]: { overs: number; runs: number; wickets: number } };
   currentStriker?: string;
