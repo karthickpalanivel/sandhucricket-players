@@ -29,8 +29,8 @@ Standard cricket apps assume you adhere to strict ICC rules with 11 players. **S
 
 ### ⚡ Speed Features
 * **History Restore:** Don't waste time setting up rules every game.
-    * Click the 🕒 **History Icon** on the Setup screen to load previous rules (Overs, Wides).
-    * Click the 🕒 **History Icon** on the Draft screen to reload the previous squads.
+    * Click the 🕒 **History Icon** on the Setup screen (rules setting screen) to load previous rules (Overs, Wides).
+    * Click the 🕒 **History Icon** on the Draft screen (players adding screen) to reload the previous squads.
 * **Auto-Rotation:** Strike rotates automatically on singles, threes, and over completion.
 
 ### 📊 Rich Statistics
@@ -39,18 +39,9 @@ Standard cricket apps assume you adhere to strict ICC rules with 11 players. **S
 * **Visual Timeline:** A scrolling ticker showing exactly what happened on every ball.
 
 ### ❌ Drawbacks
-* **Player Match-type:** Starting match without adding players in Roasters (any team), can't proceed further any actions on Match
+* **Player Match-type:** Starting match without adding players in Roster (any team), can't proceed further any actions on Match
 * **In-match addings:** Once you start the match you can't add players in between
 * **Limited Overs:** You can play only upto 20 over match no more than exceed not designed for test and tournament matches
-
----
-
-## 🛠 Tech Stack
-
-- **Framework:** Next.js 14 (App Router)
-- **Styling:** Tailwind CSS + Lucide Icons
-- **State:** React Hooks + Local Storage Persistence
-- **Design:** Mobile-First, Dark Mode Ready
 
 ---
 
@@ -96,6 +87,15 @@ Standard cricket apps assume you adhere to strict ICC rules with 11 players. **S
 | **Run Out** | Just "Wicket" | **Who + Runs Scored** |
 | **Overs Finish** | Auto-close Innings | **Manual Close** (Allows disputes/extra balls) |
 | **Player List** | Manual Entry every time | **Draft System + History Restore** |
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Styling:** Tailwind CSS + Lucide Icons
+- **State:** React Hooks + Local Storage Persistence
+- **Design:** Mobile-First, Dark Mode Ready
 
 ---
 
