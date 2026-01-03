@@ -1,11 +1,16 @@
-# 🏏 Sandhu Cricket (Web Edition)
+# 🏏 Sandhu Cricket (Updated Edition - Now you can add players)
+
+Live Link: https://freerulecric.vercel.app
+
+V.0.1 
+Live Link: https://sandhucricket.vercel.app/ (without players just set rules, add runs, wickets - innings break - repeat)
+GitHub Link: https://github.com/karthickpalanivel/sandhuCricketWeb
 
 A professional street cricket scorer application built with **Next.js**. This isn't just a tally counter; it's a logic-driven engine designed for the chaos, arguments, and specific rules of **Gully (Street) Cricket**.
 
 ![Project Status](https://img.shields.io/badge/status-active-success.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-https://freerulecric.vercel.app
 
 ## 🚀 What Makes This Special?
 
@@ -33,6 +38,11 @@ Standard cricket apps assume you adhere to strict ICC rules with 11 players. **S
 * **Innings Break Summary:** A beautiful summary card pops up automatically when the 1st innings ends.
 * **Match Presentation:** At the end of the game, see the **Top 3 Batsmen** and **Top 2 Bowlers** from both sides.
 * **Visual Timeline:** A scrolling ticker showing exactly what happened on every ball.
+
+### ❌ Drawbacks
+* **Player Match-type:** Starting match without adding players in Roasters (any team), can't proceed further any actions on Match
+* **In-match addings:** Once you start the match you can't add players in between
+* **Limited Overs:** You can play only upto 20 over match no more than exceed not designed for test and tournament matches
 
 ---
 
