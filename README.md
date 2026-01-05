@@ -1,4 +1,5 @@
 # 🏏 Sandhu Cricket (Updated Edition)
+## A P.Jr Product
 
 A professional street cricket scorer application built with **Next.js**. This isn't just a tally counter; it's a logic-driven engine designed for the chaos, arguments, and specific rules of **Gully (Street) Cricket**.
 
