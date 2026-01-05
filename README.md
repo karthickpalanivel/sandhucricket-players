@@ -109,7 +109,6 @@ Standard cricket apps assume you adhere to strict ICC rules with 11 players. **S
 
 ---
 
-### A P.Jr Product
 
 ## 🚀 Installation
 
@@ -131,3 +130,5 @@ Standard cricket apps assume you adhere to strict ICC rules with 11 players. **S
    # or
    yarn dev
    ```
+
+# A P.Jr Product
